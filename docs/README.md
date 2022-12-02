@@ -1,1 +1,10 @@
 # Notes and journals
+
+## Day 1 (Nov 30, 2022)
+Because the puzzles were released at midnight on Eastern Time and I was living in the west coast, I got my hands on the puzzles at 9 pm on November 30. This was the first time I was participating in Advent of Code, or any other online coding events at all. While waiting for the puzzle to be released, I became surprisingly anxious, fearing that I would not perform as well as I expected, especially given that I chose to use Rust (instead of Python, which I am more familiar with), a language that I started learning at the end of September. Fortunately the first puzzle was logically trivial, and I was able to solve it in a few lines of code. In the process I learned to use `std::collections::BinaryHeap`, which was a fundamental data structure that "the book" did not cover.
+
+While there was not much technical details to discuss, I wanted to write down some thoughts on doing Advent of Code. The truth is that after finishing reading "The Rust Programming Language," I was feeling lost about where to go next. It turned out that the language itself was not as hard to learn as many Youtube videos claimed, it was the kind of problems that Rust was used to solve that was really difficult. Compilers, operating systems, databases, security, networking, and other advanced topics all seemed to require a pretty big leap of faith that I simply didn't feel ready to make the jump across. Of course, sooner or later I will have make a jump, and there is simply no telling whether my first jump will land me in the place I want to go. As Steve Jobs said in the Stanford commencement speech:
+
+> you cannot connect the dots forward; you can only connect them looking backward. So you have to trust that the dots will connect in your future.
+
+Meanwhile, I will use Advent of Code as an opportunity to get more familiar with the Rust language. This means that my participation will be rather casual: I will only work on puzzles for 2 hours every day, and if I couldn't solve the puzzle for the day, I will just give up and come back to it later.
