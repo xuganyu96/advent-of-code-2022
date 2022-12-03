@@ -1,5 +1,5 @@
-use aoc2022::day2;
+use aoc2022::day3;
 
 fn main() {
-    day2::solve("inputs/2.txt");
+    day3::solve("inputs/3.text");
 }
