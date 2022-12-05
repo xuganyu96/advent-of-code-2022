@@ -1,5 +1,5 @@
-use aoc2022::day4;
+use aoc2022::day5;
 
 fn main() {
-    day4::solve("inputs/4.text");
+    day5::solve("inputs/5.text");
 }
