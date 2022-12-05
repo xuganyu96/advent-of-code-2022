@@ -1,6 +1,6 @@
-use std::fs;
-use std::collections::VecDeque;
 use std::cell::RefCell;
+use std::collections::VecDeque;
+use std::fs;
 
 /// A wrapper around a deque whose first element is the crate on the top of a
 /// stack, and whose last element is the crate on the bottom of a stack
@@ -16,7 +16,7 @@ impl Stack {
             crates.push_back(c);
         }
 
-        return Self{ crates };
+        return Self { crates };
     }
 
     /// Move the specified number of items from self to the other
@@ -84,7 +84,8 @@ pub fn solve(input_path: &str) {
             let from = stacks.get(from - 1).unwrap();
             let to = stacks.get(to - 1).unwrap();
 
-            from.borrow_mut().move_crates(&mut*to.borrow_mut(), n, false);
+            from.borrow_mut()
+                .move_crates(&mut *to.borrow_mut(), n, false);
         }
     }
     for stack in &stacks {
@@ -100,12 +101,12 @@ pub fn solve(input_path: &str) {
             let from = stacks.get(from - 1).unwrap();
             let to = stacks.get(to - 1).unwrap();
 
-            from.borrow_mut().move_crates(&mut*to.borrow_mut(), n, true);
+            from.borrow_mut()
+                .move_crates(&mut *to.borrow_mut(), n, true);
         }
     }
     for stack in &stacks {
         print!("{}", stack.borrow().crates[0]);
     }
     println!();
-
 }

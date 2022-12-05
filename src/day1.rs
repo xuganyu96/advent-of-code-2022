@@ -1,6 +1,5 @@
-use std::fs;
 use std::collections::BinaryHeap;
-
+use std::fs;
 
 pub fn solve(input: &str) {
     let input = fs::read_to_string(input).unwrap();
@@ -8,7 +7,7 @@ pub fn solve(input: &str) {
     let mut sum = 0;
     let mut max = 0;
     let mut maxes: BinaryHeap<i32> = BinaryHeap::new();
-    
+
     for line in input.lines() {
         // if line is empty, append the current calorie to sums, and set it to
         // 0; else parse it into integer then add to the current calories
@@ -24,7 +23,7 @@ pub fn solve(input: &str) {
             sum += item_cal;
         }
     }
-    
+
     let mut max_sum = 0;
     max_sum += maxes.pop().unwrap();
     println!("{max_sum}");

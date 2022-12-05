@@ -2,9 +2,9 @@ use std::fs;
 
 #[derive(Debug)]
 enum Hand {
-    Rock,  // 1 point
-    Paper,  // 2 points
-    Scissor,  // 3 points
+    Rock,    // 1 point
+    Paper,   // 2 points
+    Scissor, // 3 points
 }
 
 impl Hand {
@@ -96,14 +96,16 @@ impl Hand {
 
 pub fn solve(input: &str) {
     let input = fs::read_to_string(input).unwrap();
-    let score = input.lines()
+    let score = input
+        .lines()
         .map(|line| {
             let (self_hand, other_hand) = Hand::from_line(line);
             return self_hand.shape_score() + self_hand.outcome_score(&other_hand);
         })
         .sum::<i32>();
     println!("{score}");
-    let score = input.lines()
+    let score = input
+        .lines()
         .map(|line| {
             let (self_hand, other_hand) = Hand::from_outcomes(line);
             return self_hand.shape_score() + self_hand.outcome_score(&other_hand);
