@@ -53,7 +53,7 @@ fn generate_stacks() -> Vec<RefCell<Stack>> {
     return stacks;
 }
 
-fn generate_test_stacks() -> Vec<RefCell<Stack>> {
+fn _generate_test_stacks() -> Vec<RefCell<Stack>> {
     let stacks = vec![
         RefCell::new(Stack::from_str("NZ")),
         RefCell::new(Stack::from_str("DCM")),
