@@ -1,8 +1,7 @@
+// TODO: wrap Item in another struct so we can manipulate Rc<RefCell<Item>>
 use std::cell::RefCell;
 use std::fs;
 use std::rc::Rc;
-
-/// I need a part that parses the command and a part that models a file system
 
 #[derive(Debug)]
 enum Item {
