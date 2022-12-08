@@ -1,4 +1,3 @@
-// TODO: wrap Item in another struct so we can manipulate Rc<RefCell<Item>>
 use std::cell::RefCell;
 use std::fs;
 use std::rc::Rc;
@@ -124,9 +123,9 @@ fn parse_ls(ls: &str) -> (Vec<String>, Vec<(String, u64)>) {
     return (dirs, files);
 }
 
-pub fn solve(input: &str) {
+fn main() {
     // Parsing command and mutating the state
-    let input = fs::read_to_string(input).unwrap();
+    let input = fs::read_to_string("inputs/7.txt").unwrap();
 
     let root = Rc::new(RefCell::new(Item::Dir(
         "/".to_string(),

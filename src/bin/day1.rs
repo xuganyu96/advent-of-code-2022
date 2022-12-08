@@ -1,8 +1,8 @@
 use std::collections::BinaryHeap;
 use std::fs;
 
-pub fn solve(input: &str) {
-    let input = fs::read_to_string(input).unwrap();
+fn main() {
+    let input = fs::read_to_string("inputs/1.txt").unwrap();
     let mut sums: Vec<i32> = vec![];
     let mut sum = 0;
     let mut max = 0;

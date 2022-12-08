@@ -24,8 +24,8 @@ fn has_repeat(s: &str) -> bool {
     return false;
 }
 
-pub fn solve(input: &str) {
-    let input = fs::read_to_string(input).unwrap();
+fn main() {
+    let input = fs::read_to_string("inputs/6.txt").unwrap();
 
     for i in 0..(input.len() - 3) {
         let slice = &input[i..(i+4)];

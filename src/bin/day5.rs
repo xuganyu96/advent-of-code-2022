@@ -75,9 +75,9 @@ fn parse_command(line: &str) -> (usize, usize, i32) {
     return (from, to, n);
 }
 
-pub fn solve(input_path: &str) {
+fn main() {
     let stacks = generate_stacks();
-    let input = fs::read_to_string(input_path).unwrap();
+    let input = fs::read_to_string("inputs/5.txt").unwrap();
     for line in input.lines() {
         if line.contains("move") {
             let (from, to, n) = parse_command(line);
@@ -94,7 +94,7 @@ pub fn solve(input_path: &str) {
     println!();
 
     let stacks = generate_stacks();
-    let input = fs::read_to_string(input_path).unwrap();
+    let input = fs::read_to_string("inputs/5.txt").unwrap();
     for line in input.lines() {
         if line.contains("move") {
             let (from, to, n) = parse_command(line);

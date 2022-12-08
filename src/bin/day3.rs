@@ -4,7 +4,6 @@ struct Rucksack {
     first_priorities: Vec<i32>,  // priorities of the first compartment
     second_priorities: Vec<i32>, // pirorities of the second compartment
 }
-
 impl Rucksack {
     fn get_priority(c: u8) -> i32 {
         return match c {
@@ -66,8 +65,8 @@ fn find_badge_from_lines(l1: &str, l2: &str, l3: &str) -> i32 {
     return 0;
 }
 
-pub fn solve(input: &str) {
-    let input = fs::read_to_string(input).unwrap();
+fn main() {
+    let input = fs::read_to_string("inputs/3.txt").unwrap();
     // part 1: finding common priority across the two compartments
     let sum = input
         .lines()

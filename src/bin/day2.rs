@@ -94,8 +94,8 @@ impl Hand {
     }
 }
 
-pub fn solve(input: &str) {
-    let input = fs::read_to_string(input).unwrap();
+fn main() {
+    let input = fs::read_to_string("inputs/2.txt").unwrap();
     let score = input
         .lines()
         .map(|line| {

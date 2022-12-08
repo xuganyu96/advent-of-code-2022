@@ -32,8 +32,8 @@ impl Range {
     }
 }
 
-pub fn solve(input: &str) {
-    let input = fs::read_to_string(input).unwrap();
+fn main() {
+    let input = fs::read_to_string("inputs/4.txt").unwrap();
     let sum = input
         .lines()
         .map(|line| {
