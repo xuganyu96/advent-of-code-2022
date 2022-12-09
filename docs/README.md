@@ -1,5 +1,71 @@
 # Notes and journals
 
+## Day 7 (Dec 6, 2022)
+Learned that DFS is deeply coupled with the data structure "stack". Here is an alternative solution to day 7's problem that takes advantage of the fact that the input performed a DFS on the file tree:
+
+```python
+from collections import deque
+
+class Dir:
+    """Simpler data structure to work with"""
+    def __init__(self, name):
+        self.name = name
+        self.size = 0
+
+    def add_size(self, size):
+        self.size += size
+    
+    def __repr__(self):
+        return f"<Dir name={self.name} size={self.size}>"
+
+if __name__ == "__main__":
+    stack = deque([Dir("")])  # root is the only directory with empty name
+    dirs = []
+
+    with open("input.txt", "r") as f:
+        lines = f.read().splitlines()
+
+    for line in lines:
+        if line.startswith("$ ls"):
+            # ignore
+            pass
+        elif line.startswith("dir"):
+            # ignore
+            pass
+        elif line.startswith("$ cd"):
+            dst = line.split(" ")[-1]
+            if dst == "/":  # asumely assume only one call to root
+                pass
+            elif dst == "..":
+                # pop the current directory and add its size to its parent
+                dir = stack.pop()
+                stack[-1].add_size(dir.size)
+                dirs.append(dir)
+            else:  # go deeper
+                stack.append(Dir(dst))
+        else:  # file
+            tokens = line.split(" ")
+            size = int(tokens[0])
+            filename = tokens[1]
+            stack[-1].add_size(size)
+
+    while stack:
+        dir = stack.pop()
+        if len(stack) > 0:
+            stack[-1].add_size(dir.size)
+        dirs.append(dir)
+
+    size_sum = 0
+    root_dir = [dir for dir in dirs if dir.name == ""][0]
+    for dir in dirs:
+        if dir.size <= 100000:
+            size_sum += dir.size
+    print(size_sum)
+
+    to_delete = 30000000 - (70000000 - root_dir.size)
+    print(min([dir.size for dir in dirs if dir.size > to_delete]))
+```
+
 ## Day 5 (Dec 4, 2022)
 Learned something new today. For day 5's question, I have a list of structs, and one of the operations requires that two elements from that list are mutated in a single function call:
 
