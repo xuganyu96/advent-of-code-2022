@@ -1,5 +1,39 @@
 # Notes and journals
 
+## Day 11 (Dec 10, 2022)
+Today's problem is hard, and parsing inputs is not trivial. I took the "easy" way out and hard-coded the game state instead of writing the logic that parses the inputs into the game state.
+
+Also learned something new today: say I want to get a list of functions and instantiate them:
+
+```rust
+let functions: Vec<Box<dyn Fn(i128) -> i128>> = vec![
+    Box::new(|x| x * 19i128) as Box<dyn Fn(i128) -> i128>,
+    Box::new(|x| x + 1),
+    Box::new(|x| x + 8),
+    Box::new(|x| x * x),
+    Box::new(|x| x + 6),
+    Box::new(|x| x * 17),
+    Box::new(|x| x + 5),
+    Box::new(|x| x + 3),
+];
+```
+
+Later on I can retrieve and call them
+
+```rust
+let func = functions.get(0).unwrap();
+let output = func(19);
+println!("{output}");  // should be 361 = 19 * 19
+```
+
+The second part involved overflowing the integers that track my internal state (worry level can keep being squared in each of the 10000 rounds, so it doesn't matter what integer size is used, it will overflow). To prevent the overflow, some kind of modulos need to be applied either before each monkey's operation is applied or before the output of each monkey's operation is passed to the next monkey. Note that these two scenarios are practically equivalent, since "applying modulos before passing to the next monkey" is the same as "applying modulos before applying next monkey's operation." I chose to apply the modulos before applying each monkey's operation.
+
+We know that there are only three kinds of operations: add a constant, multiply by a constant, and square. The goal is such that `func(x % global_modulo) % local_modulo` is the same as `func(x) % local_modulo`, where local modulo is the number used by individual monkeys when deciding which next monkey to pass the worry level toward. The global modulo that I ended up using is the product of all local modulo (although I believe the least common multiple will also do). This works because this global modulo is divisble by all local modulos, so `(x - global_modulo) % local_modulo = x % local_modulo` for all local modulos, and so we have:
+
+* `(x + c - gmod) % lmod == (x + c) % lmod` for all individual `lmod`
+* `(kx % gmod) % lmod == kx % lmod` for all individual `lmod`
+* `((x % gmod) ^ 2) % lmod == x^2 % lmod` for all individual `lmod`
+
 ## Day 7 (Dec 6, 2022)
 Learned that DFS is deeply coupled with the data structure "stack". Here is an alternative solution to day 7's problem that takes advantage of the fact that the input performed a DFS on the file tree:
 

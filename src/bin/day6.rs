@@ -1,5 +1,5 @@
-use std::fs;
 use std::collections::HashMap;
+use std::fs;
 
 fn has_repeat(s: &str) -> bool {
     let mut map: HashMap<char, i32> = HashMap::new();
@@ -8,7 +8,7 @@ fn has_repeat(s: &str) -> bool {
         match count {
             Some(v) => {
                 map.insert(c, v + 1);
-            },
+            }
             None => {
                 map.insert(c, 1);
             }
@@ -28,7 +28,7 @@ fn main() {
     let input = fs::read_to_string("inputs/6.txt").unwrap();
 
     for i in 0..(input.len() - 3) {
-        let slice = &input[i..(i+4)];
+        let slice = &input[i..(i + 4)];
         if !has_repeat(slice) {
             println!("{}", i + 4);
             break;
@@ -36,7 +36,7 @@ fn main() {
     }
 
     for i in 0..(input.len() - 13) {
-        let slice = &input[i..(i+14)];
+        let slice = &input[i..(i + 14)];
         if !has_repeat(slice) {
             println!("{}", i + 14);
             break;

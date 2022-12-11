@@ -2,11 +2,11 @@
 use std::collections::VecDeque;
 
 struct Game {
-    items: Vec<VecDeque<i128>>,  // list of monkeys, where each monkey is a list of worry levels
-    modulos: Vec<i128>,   // list of moduloes
+    items: Vec<VecDeque<i128>>, // list of monkeys, where each monkey is a list of worry levels
+    modulos: Vec<i128>,         // list of moduloes
     operations: Vec<Box<dyn Fn(i128) -> i128>>,
-    targets: Vec<(usize, usize)>,  // target monkey if true, if false
-    business: Vec<i128>,  // count of number of inspection per monkey
+    targets: Vec<(usize, usize)>, // target monkey if true, if false
+    business: Vec<i128>,          // count of number of inspection per monkey
     level_divisor: i128,
     lcm: i128,
 }
@@ -27,7 +27,9 @@ impl Game {
 
         let modulos = vec![7, 2, 19, 3, 13, 11, 5, 17];
         let mut lcm = 1;
-        for m in &modulos { lcm *= m };
+        for m in &modulos {
+            lcm *= m
+        }
         let operations = vec![
             Box::new(|x| x * 19i128) as Box<dyn Fn(i128) -> i128>,
             Box::new(|x| x + 1),
@@ -39,11 +41,26 @@ impl Game {
             Box::new(|x| x + 3),
         ];
         let targets = vec![
-            (6, 2), (2, 0), (6, 5), (1, 0), (3, 1), (4, 7), (5, 7), (3, 4),
+            (6, 2),
+            (2, 0),
+            (6, 5),
+            (1, 0),
+            (3, 1),
+            (4, 7),
+            (5, 7),
+            (3, 4),
         ];
         let business = Vec::from([0; 8]);
 
-        return Self { items, modulos, operations, targets, business, level_divisor, lcm };
+        return Self {
+            items,
+            modulos,
+            operations,
+            targets,
+            business,
+            level_divisor,
+            lcm,
+        };
     }
 
     /// for monkey i, inspect all items in order, and make throws accordingly
@@ -55,24 +72,22 @@ impl Game {
         let func = self.operations.get(i).unwrap();
         // pop current set of items and record the final worry levels
         while let Some(top) = items.pop_front() {
-            levels.push(func(top) / self.level_divisor % self.lcm);
+            levels.push(func(top % self.lcm) / self.level_divisor);
+            // levels.push(func(top) / self.level_divisor % self.lcm);  also works
         }
 
         let (true_t, false_t) = self.targets.get(i).unwrap();
-        levels.iter()
-            .for_each(|level| {
-                match level % modulo {
-                    0 => {
-                        let target_items = self.items.get_mut(*true_t).unwrap();
-                        target_items.push_back(*level);
-                    },
-                    _ => {
-                        let target_items = self.items.get_mut(*false_t).unwrap();
-                        target_items.push_back(*level);
-                    },
-                }
-            });
-        
+        levels.iter().for_each(|level| match level % modulo {
+            0 => {
+                let target_items = self.items.get_mut(*true_t).unwrap();
+                target_items.push_back(*level);
+            }
+            _ => {
+                let target_items = self.items.get_mut(*false_t).unwrap();
+                target_items.push_back(*level);
+            }
+        });
+
         // update business
         let business = self.business.get_mut(i).unwrap();
         *business += business_delta as i128;

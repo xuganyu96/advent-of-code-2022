@@ -11,21 +11,29 @@ fn is_visible(grid: &[Vec<u32>], tree: (usize, usize)) -> bool {
 
     for r in 0..tree_r {
         let other_tree = grid.get(r).unwrap().get(tree_c).unwrap();
-        if *other_tree >= *tree_h { from_top = false; }
+        if *other_tree >= *tree_h {
+            from_top = false;
+        }
     }
 
-    for r in (tree_r+1)..nrows{
+    for r in (tree_r + 1)..nrows {
         let other_tree = grid.get(r).unwrap().get(tree_c).unwrap();
-        if *other_tree >= *tree_h { from_bot = false; }
+        if *other_tree >= *tree_h {
+            from_bot = false;
+        }
     }
 
-    for c in 0..tree_c{
+    for c in 0..tree_c {
         let other_tree = grid.get(tree_r).unwrap().get(c).unwrap();
-        if *other_tree >= *tree_h { from_left = false; }
+        if *other_tree >= *tree_h {
+            from_left = false;
+        }
     }
-    for c in (tree_c+1)..ncols {
+    for c in (tree_c + 1)..ncols {
         let other_tree = grid.get(tree_r).unwrap().get(c).unwrap();
-        if *other_tree >= *tree_h { from_right = false; }
+        if *other_tree >= *tree_h {
+            from_right = false;
+        }
     }
     return from_top || from_bot || from_left || from_right;
 }
@@ -47,7 +55,7 @@ fn view_score(grid: &[Vec<u32>], tree: (usize, usize)) -> u32 {
         }
         r -= 1;
     }
-    // look down 
+    // look down
     let mut r = tree_r + 1;
     while r < nrows {
         let other_tree = grid.get(r as usize).unwrap().get(tree_c).unwrap();
@@ -57,7 +65,7 @@ fn view_score(grid: &[Vec<u32>], tree: (usize, usize)) -> u32 {
         }
         r += 1;
     }
-    // look left 
+    // look left
     let mut c = (tree_c as i32) - 1;
     while c >= 0 {
         let other_tree = grid.get(tree_r).unwrap().get(c as usize).unwrap();
@@ -85,15 +93,13 @@ fn main() {
     let input = fs::read_to_string("inputs/8.txt").unwrap();
     let mut grid: Vec<Vec<u32>> = vec![];
 
-    input.lines()
-        .for_each(|line| {
-            let mut row = vec![];
-            for c in line.chars() {
-                row.push(c.to_digit(10).unwrap());
-            }
-            grid.push(row);
-        });
-    
+    input.lines().for_each(|line| {
+        let mut row = vec![];
+        for c in line.chars() {
+            row.push(c.to_digit(10).unwrap());
+        }
+        grid.push(row);
+    });
 
     let nrows = grid.len();
     let ncols = grid.get(0).unwrap().len();
@@ -113,4 +119,3 @@ fn main() {
     }
     println!("{sum}, {max}");
 }
-
