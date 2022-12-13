@@ -1,5 +1,15 @@
 # Notes and journals
 
+## Day 13 (Dec 12, 2022)
+Today's problem was the first that I could not solve within 2 hours. The main difficulty lies with parsing the inputs. I could either try to write a parser that can parse nested list, or I could use `serde_json` crate to parse it for me. In either case, I ran out of time to do it in Rust, so I ended up solving the problem with Python.
+
+With today's failure to solve the problem in time I feel like I need to set some rules in place so that doing Advent of Code will not spill over and affect my normal work and life:
+
+- I only have 2 hours for the first attempt
+- Python is not allowed on the first attempt
+- Second attempt is allowed only on weekends and after the full event is over
+- There is no time or language limit on the second or later attempts
+
 ## Day 11 (Dec 10, 2022)
 Today's problem is hard, and parsing inputs is not trivial. I took the "easy" way out and hard-coded the game state instead of writing the logic that parses the inputs into the game state.
 
