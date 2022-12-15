@@ -1,5 +1,8 @@
 # Notes and journals
 
+## Day 15 (Dec 14, 2022)
+I don't know why but I implemented the same idea as some of the solutions posted on [Reddit]() but my solution is very slow... Today's problem took one Reddit user's solution 15ms to solve, but my solution, using largely the same idea, took 70 seconds!
+
 ## Day 13 (Dec 12, 2022)
 Today's problem was the first that I could not solve within 2 hours. The main difficulty lies with parsing the inputs. I could either try to write a parser that can parse nested list, or I could use `serde_json` crate to parse it for me. In either case, I ran out of time to do it in Rust, so I ended up solving the problem with Python.
 
