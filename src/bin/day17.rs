@@ -4,7 +4,7 @@
 //! rock or floor. After a rock is spawned, it is first pushed by the stream
 //! then falls down.
 use std::fs;
-use std::collections::HashSet;
+use std::collections::{ HashSet, HashMap };
 
 #[derive(Debug)]
 enum Shape {
@@ -135,16 +135,63 @@ impl Simulation {
         });
         self.moving_rocks = output;
     }
+
+    /// Print the top N rows
+    fn stringify_top(&self, n: usize) -> String {
+        let mut s = String::new();
+
+        for row_from_top in 0..n {
+            for col in 0..self.width {
+                let p = Point::new(col, self.peak - row_from_top as i64);
+                if self.stable_rocks.contains(&p) {
+                    s.push_str("#");
+                } else {
+                    s.push_str(".");
+                }
+            }
+            s.push_str("\n");
+        }
+
+        return s;
+    }
 }
 
 fn simulate(rounds: usize, stream: &[char]) {
     let mut stream_cur: usize = 0;
     let new_shapes = vec![Shape::Hori, Shape::Cross, Shape::Corner, Shape::Verti, Shape::Square];
     let mut sim = Simulation::new(7);
-    for round in 0..rounds {
+    // (shape, stream, snapshot) -> (round, height)
+    let mut footprints: HashMap<(usize, usize, String), (usize, i64)> = HashMap::new();
+    let mut round = 0usize;
+    let mut skipped = 0i64;
+    let multiplier = 100;
+    let snapshot_rows = 20;
+
+    while round < rounds {
+        let shape_i = round % new_shapes.len();
+        stream_cur = stream_cur % stream.len();
+        let snapshot = sim.stringify_top(snapshot_rows);
+        if skipped == 0 {
+            if let Some((prev_round, prev_height)) = footprints.get(&(shape_i, stream_cur, snapshot.clone())) {
+                // println!("shape {shape_i} stream {stream_cur}");
+                // println!("  prev round {prev_round} prev height {prev_height}");
+                // println!("  curr round {round} cur height {}", sim.peak);
+                let increment = sim.peak - prev_height;
+                let period = round - prev_round;
+                // println!("  fast forwarding period {period} increment {increment}");
+
+                while round + multiplier * period < rounds {
+                    // println!("  skipped to {round}");
+                    round += multiplier * period;
+                    skipped += (multiplier as i64) * increment;
+                }
+            } else {
+                footprints.insert((shape_i, stream_cur, snapshot), (round, sim.peak));
+            }
+        }
+
         let shape = new_shapes.get(round % new_shapes.len()).unwrap();
         sim.spawn(shape);
-
         while sim.moving_rocks.len() > 0 { // move horizontally first, then vertically
             let hori_dir = match stream.get(stream_cur % stream.len()).unwrap() {
                 '<' => Dir::Left,
@@ -164,15 +211,15 @@ fn simulate(rounds: usize, stream: &[char]) {
                 sim.stabilize_moving_rocks();
             }
         }
+        round += 1;
     }
 
-    println!("{}", sim.peak + 1);
+    println!("{}", sim.peak + skipped + 1);
 }
 
 fn main() {
-    let inputs = fs::read_to_string("inputs/17.test").unwrap();
+    let inputs = fs::read_to_string("inputs/17.txt").unwrap();
     let stream: Vec<char> = inputs.lines().next().unwrap().chars().collect();
     simulate(2022, &stream);
-
-    // TODO: Solve part 2 by finding the period of simulation
+    simulate(1_000_000_000_000, &stream);
 }
