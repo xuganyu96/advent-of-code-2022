@@ -1,14 +1,17 @@
-use std::fs;
 use std::collections::HashSet;
+use std::fs;
 
 #[derive(Debug, Clone, PartialEq, Hash, Eq)]
-struct Point { x: i32, y: i32 }
+struct Point {
+    x: i32,
+    y: i32,
+}
 
 struct Simulation {
     rocks: HashSet<Point>,
     sands: HashSet<Point>,
-    bottom_line: i32,  // depth of the deepest rock
-    unstable_sand: Option<Point>,  // the next sand to move
+    bottom_line: i32,             // depth of the deepest rock
+    unstable_sand: Option<Point>, // the next sand to move
     floor: Option<i32>,
 }
 
@@ -25,16 +28,14 @@ impl Simulation {
 
     fn from_input(inputs: &str) -> Self {
         let mut sim = Self::new();
-        inputs.lines()
-        .for_each(|line| {
+        inputs.lines().for_each(|line| {
             let mut points: Vec<Point> = vec![];
-            line.split(" -> ")
-                .for_each(|point| {
-                    let mut nums = point.split(",");
-                    let x = nums.next().unwrap().parse::<i32>().unwrap();
-                    let y = nums.next().unwrap().parse::<i32>().unwrap();
-                    points.push(Point{ x, y });
-                });
+            line.split(" -> ").for_each(|point| {
+                let mut nums = point.split(",");
+                let x = nums.next().unwrap().parse::<i32>().unwrap();
+                let y = nums.next().unwrap().parse::<i32>().unwrap();
+                points.push(Point { x, y });
+            });
             sim.add_line(&points);
         });
         return sim;
@@ -46,9 +47,11 @@ impl Simulation {
 
     fn add_rock(&mut self, rock: &Point) {
         let rock = rock.clone();
-        if !self.rocks.contains(&rock) { 
-            if rock.y > self.bottom_line { self.bottom_line = rock.y; }
-            self.rocks.insert(rock); 
+        if !self.rocks.contains(&rock) {
+            if rock.y > self.bottom_line {
+                self.bottom_line = rock.y;
+            }
+            self.rocks.insert(rock);
         }
     }
 
@@ -57,21 +60,21 @@ impl Simulation {
         if start.x == stop.x {
             if start.y <= stop.y {
                 for y in start.y..=stop.y {
-                    rocks.push(Point{ x: start.x, y });
+                    rocks.push(Point { x: start.x, y });
                 }
             } else {
                 for y in stop.y..=start.y {
-                    rocks.push(Point{ x: start.x, y });
+                    rocks.push(Point { x: start.x, y });
                 }
             }
         } else if start.y == stop.y {
             if start.x <= stop.x {
                 for x in start.x..=stop.x {
-                    rocks.push(Point{ x, y: start.y });
+                    rocks.push(Point { x, y: start.y });
                 }
             } else {
                 for x in stop.x..=start.x {
-                    rocks.push(Point{ x, y: start.y });
+                    rocks.push(Point { x, y: start.y });
                 }
             }
         } else {
@@ -82,13 +85,12 @@ impl Simulation {
     }
 
     fn add_line(&mut self, points: &[Point]) {
-        points.windows(2)
-            .for_each(|window| {
-                let p1 = &window[0];
-                let p2 = &window[1];
-                let rocks: Vec<Point> = Self::render_rocks(p1, p2);
-                rocks.iter().for_each(|rock| self.add_rock(rock));
-            });
+        points.windows(2).for_each(|window| {
+            let p1 = &window[0];
+            let p2 = &window[1];
+            let rocks: Vec<Point> = Self::render_rocks(p1, p2);
+            rocks.iter().for_each(|rock| self.add_rock(rock));
+        });
     }
 
     fn is_air(&self, p: &Point) -> bool {
@@ -108,20 +110,37 @@ impl Simulation {
     /// the next coordinate that this sand will fall onto, unless the sand
     /// cannot move, then return None
     fn next_move(&self, sand: &Point) -> Option<Point> {
-        let bottom = Point{ x: sand.x, y: sand.y + 1 };
-        let diag_left = Point{ x: sand.x - 1, y: sand.y + 1};
-        let diag_right = Point{ x: sand.x + 1, y: sand.y + 1 };
-        
-        if self.is_air(&bottom) { return Some(bottom); }
-        if self.is_air(&diag_left) { return Some(diag_left); }
-        if self.is_air(&diag_right) { return Some(diag_right); }
+        let bottom = Point {
+            x: sand.x,
+            y: sand.y + 1,
+        };
+        let diag_left = Point {
+            x: sand.x - 1,
+            y: sand.y + 1,
+        };
+        let diag_right = Point {
+            x: sand.x + 1,
+            y: sand.y + 1,
+        };
+
+        if self.is_air(&bottom) {
+            return Some(bottom);
+        }
+        if self.is_air(&diag_left) {
+            return Some(diag_left);
+        }
+        if self.is_air(&diag_right) {
+            return Some(diag_right);
+        }
 
         return None;
     }
 
     /// Simulation is stable if all sands are stable
     fn is_stable(&self) -> bool {
-        if let None = self.unstable_sand { return true; }
+        if let None = self.unstable_sand {
+            return true;
+        }
         return false;
     }
 
@@ -164,25 +183,33 @@ impl Simulation {
         let mut grid: Vec<String> = Vec::new();
         for d in 0..=depth {
             let mut line = String::new();
-            
-            for w in -width..=width {
-                let p = Point{ x: source.x + w, y: d};
 
-                if self.rocks.contains(&p) { line.push_str("#"); }
-                else if self.sands.contains(&p) { line.push_str("o"); }
-                else if p == *source {
+            for w in -width..=width {
+                let p = Point {
+                    x: source.x + w,
+                    y: d,
+                };
+
+                if self.rocks.contains(&p) {
+                    line.push_str("#");
+                } else if self.sands.contains(&p) {
+                    line.push_str("o");
+                } else if p == *source {
                     line.push_str("X");
+                } else if let Some(floor) = self.floor {
+                    if p.y >= floor {
+                        line.push_str("#");
+                    } else {
+                        line.push_str(".");
+                    }
+                } else {
+                    line.push_str(".");
                 }
-                else if let Some(floor) = self.floor {
-                    if p.y >= floor { line.push_str("#"); }
-                    else { line.push_str("."); }
-                }
-                else { line.push_str("."); }
             }
 
             grid.push(line);
         }
-        
+
         grid.iter().for_each(|line| println!("{line}"));
     }
 }
@@ -193,9 +220,9 @@ impl Simulation {
 fn main() {
     let inputs = fs::read_to_string("inputs/14.txt").unwrap();
     let mut sim = Simulation::from_input(&inputs);
- 
+
     while !sim.is_abyss() {
-        sim.add_sand(&Point{ x: 500, y: 0 });
+        sim.add_sand(&Point { x: 500, y: 0 });
         while !sim.is_stable() && !sim.is_abyss() {
             sim.step();
         }
@@ -206,10 +233,10 @@ fn main() {
     let mut sim = Simulation::from_input(&inputs);
     sim.set_floor();
 
-    let source = Point{ x: 500, y: 0};
+    let source = Point { x: 500, y: 0 };
     while !sim.is_safe_to_stand(&source) {
         sim.add_sand(&source);
-        while !sim.is_stable(){
+        while !sim.is_stable() {
             sim.step();
         }
         // sim.render(60, 50, &source);

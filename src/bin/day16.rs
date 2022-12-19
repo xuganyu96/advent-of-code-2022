@@ -4,4 +4,3 @@
 //! it will take (t_travel + 1) minutes to open the valve, where t_travel is
 //! the shortest path from "p" the "p_next", so the cumulative release will be
 //! (t_remain - t_travel + 1) * rates[p_next]
-

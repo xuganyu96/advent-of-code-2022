@@ -3,19 +3,29 @@
 //! units from the wall, and its bottom edge is 3 units from the the highest
 //! rock or floor. After a rock is spawned, it is first pushed by the stream
 //! then falls down.
+use std::collections::{HashMap, HashSet};
 use std::fs;
-use std::collections::{ HashSet, HashMap };
 
 #[derive(Debug)]
 enum Shape {
-    Hori, Cross, Corner, Verti, Square
+    Hori,
+    Cross,
+    Corner,
+    Verti,
+    Square,
 }
 
-enum Dir { Left, Right, Down }
+enum Dir {
+    Left,
+    Right,
+    Down,
+}
 
-#[derive(Clone,Debug,Hash,Eq,PartialEq)]
-struct Point { x: i64, y: i64 }
-
+#[derive(Clone, Debug, Hash, Eq, PartialEq)]
+struct Point {
+    x: i64,
+    y: i64,
+}
 
 impl Point {
     fn new(x: i64, y: i64) -> Self {
@@ -24,7 +34,7 @@ impl Point {
 }
 
 struct Simulation {
-    peak: i64,  // level of the highest rock; level starts at 0
+    peak: i64, // level of the highest rock; level starts at 0
     width: i64,
     stable_rocks: HashSet<Point>,
     moving_rocks: HashSet<Point>,
@@ -33,8 +43,9 @@ struct Simulation {
 impl Simulation {
     fn new(width: i64) -> Self {
         return Self {
-            peak: -1, width, 
-            stable_rocks: HashSet::new(), 
+            peak: -1,
+            width,
+            stable_rocks: HashSet::new(),
             moving_rocks: HashSet::new(),
         };
     }
@@ -43,10 +54,10 @@ impl Simulation {
     /// lower than the floor
     fn is_in_bounds(&self, rocks: &HashSet<Point>) -> bool {
         if rocks.len() == 0 {
-            return true;   // empty set is trivially within bounds
+            return true; // empty set is trivially within bounds
         }
         let (mut x_min, mut x_max, mut y_min) = (0, 0, 0);
-        
+
         rocks.iter().for_each(|rock| {
             x_min = x_min.min(rock.x);
             x_max = x_max.max(rock.x);
@@ -73,7 +84,7 @@ impl Simulation {
         self.moving_rocks.iter().for_each(|rock| {
             after_move.insert(Point::new(rock.x + x_delta, rock.y + y_delta));
         });
-        
+
         return after_move;
     }
 
@@ -97,7 +108,7 @@ impl Simulation {
     fn spawn(&mut self, shape: &Shape) {
         let rocks: Vec<Point> = match shape {
             Shape::Hori => vec![
-                Point::new(2, self.peak + 4),  // self.peak can be -1
+                Point::new(2, self.peak + 4), // self.peak can be -1
                 Point::new(3, self.peak + 4),
                 Point::new(4, self.peak + 4),
                 Point::new(5, self.peak + 4),
@@ -158,7 +169,13 @@ impl Simulation {
 
 fn simulate(rounds: usize, stream: &[char]) {
     let mut stream_cur: usize = 0;
-    let new_shapes = vec![Shape::Hori, Shape::Cross, Shape::Corner, Shape::Verti, Shape::Square];
+    let new_shapes = vec![
+        Shape::Hori,
+        Shape::Cross,
+        Shape::Corner,
+        Shape::Verti,
+        Shape::Square,
+    ];
     let mut sim = Simulation::new(7);
     // (shape, stream, snapshot) -> (round, height)
     let mut footprints: HashMap<(usize, usize, String), (usize, i64)> = HashMap::new();
@@ -172,7 +189,9 @@ fn simulate(rounds: usize, stream: &[char]) {
         stream_cur = stream_cur % stream.len();
         let snapshot = sim.stringify_top(snapshot_rows);
         if skipped == 0 {
-            if let Some((prev_round, prev_height)) = footprints.get(&(shape_i, stream_cur, snapshot.clone())) {
+            if let Some((prev_round, prev_height)) =
+                footprints.get(&(shape_i, stream_cur, snapshot.clone()))
+            {
                 // println!("shape {shape_i} stream {stream_cur}");
                 // println!("  prev round {prev_round} prev height {prev_height}");
                 // println!("  curr round {round} cur height {}", sim.peak);
@@ -192,7 +211,8 @@ fn simulate(rounds: usize, stream: &[char]) {
 
         let shape = new_shapes.get(round % new_shapes.len()).unwrap();
         sim.spawn(shape);
-        while sim.moving_rocks.len() > 0 { // move horizontally first, then vertically
+        while sim.moving_rocks.len() > 0 {
+            // move horizontally first, then vertically
             let hori_dir = match stream.get(stream_cur % stream.len()).unwrap() {
                 '<' => Dir::Left,
                 '>' => Dir::Right,

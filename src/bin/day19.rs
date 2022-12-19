@@ -1,8 +1,13 @@
 //! Day 19: Not Enough Minerals
-use std::fs;
 use std::collections::HashMap;
+use std::fs;
 
-enum Resource { Ore, Clay, Obsidian, Geode }
+enum Resource {
+    Ore,
+    Clay,
+    Obsidian,
+    Geode,
+}
 
 #[derive(Debug)]
 struct Cost {
@@ -13,7 +18,11 @@ struct Cost {
 
 impl Cost {
     fn new(ore: i32, obsidian: i32, clay: i32) -> Self {
-        return Self { ore, obsidian, clay };
+        return Self {
+            ore,
+            obsidian,
+            clay,
+        };
     }
 }
 
@@ -27,30 +36,43 @@ struct Blueprint {
 
 impl Blueprint {
     fn new(
-        ore_bots_cost: Cost, 
-        clay_bots_cost: Cost, 
-        obsidian_bots_cost: Cost, 
-        geode_bots_cost: Cost
+        ore_bots_cost: Cost,
+        clay_bots_cost: Cost,
+        obsidian_bots_cost: Cost,
+        geode_bots_cost: Cost,
     ) -> Self {
         return Self {
             ore_bots_cost,
             clay_bots_cost,
             obsidian_bots_cost,
             geode_bots_cost,
-        }
+        };
     }
 
     fn from_line(line: &str) -> Self {
         let tokens: Vec<&str> = line.split(" ").collect();
         let ore_bots_cost = Cost::new(tokens[6].parse::<i32>().unwrap(), 0, 0);
         let clay_bots_cost = Cost::new(tokens[12].parse::<i32>().unwrap(), 0, 0);
-        let obsidian_bots_cost = Cost::new(tokens[18].parse::<i32>().unwrap(), 0, tokens[21].parse::<i32>().unwrap());
-        let geode_bots_cost = Cost::new(tokens[27].parse::<i32>().unwrap(), tokens[30].parse::<i32>().unwrap(), 0);
-        return Self::new(ore_bots_cost, clay_bots_cost, obsidian_bots_cost, geode_bots_cost);
+        let obsidian_bots_cost = Cost::new(
+            tokens[18].parse::<i32>().unwrap(),
+            0,
+            tokens[21].parse::<i32>().unwrap(),
+        );
+        let geode_bots_cost = Cost::new(
+            tokens[27].parse::<i32>().unwrap(),
+            tokens[30].parse::<i32>().unwrap(),
+            0,
+        );
+        return Self::new(
+            ore_bots_cost,
+            clay_bots_cost,
+            obsidian_bots_cost,
+            geode_bots_cost,
+        );
     }
 }
 
-#[derive(Clone,Debug,Eq,PartialEq,Hash)]
+#[derive(Clone, Debug, Eq, PartialEq, Hash)]
 struct State {
     ore_bots: i32,
     clay_bots: i32,
@@ -59,7 +81,7 @@ struct State {
     ore: i32,
     clay: i32,
     obsidian: i32,
-    geode: i32
+    geode: i32,
 }
 
 impl State {
@@ -84,14 +106,10 @@ impl State {
                 let _max_cost = _max_cost.max(blueprint.obsidian_bots_cost.ore);
                 let _max_cost = _max_cost.max(blueprint.geode_bots_cost.ore);
                 (_max_cost, self.ore_bots)
-            },
-            Resource::Clay => {
-                (blueprint.obsidian_bots_cost.clay, self.clay_bots)
-            },
-            Resource::Obsidian => {
-                (blueprint.geode_bots_cost.obsidian, self.obsidian_bots)
-            },
-            _ => (0, 0)
+            }
+            Resource::Clay => (blueprint.obsidian_bots_cost.clay, self.clay_bots),
+            Resource::Obsidian => (blueprint.geode_bots_cost.obsidian, self.obsidian_bots),
+            _ => (0, 0),
         };
         return cur_output < max_cost;
     }
@@ -130,9 +148,14 @@ impl State {
     }
 }
 
-/// Given the starting state, return the maximum number of geode that can be 
+/// Given the starting state, return the maximum number of geode that can be
 /// obtained given the remaining amount of time
-fn dfs(start: State, blueprint: &Blueprint, t_remain: i32, memo: &mut HashMap<(State, i32), i32>) -> i32 {
+fn dfs(
+    start: State,
+    blueprint: &Blueprint,
+    t_remain: i32,
+    memo: &mut HashMap<(State, i32), i32>,
+) -> i32 {
     // if start.geode_bots > 0 {
     //     println!("{start:?}");
     // }
@@ -151,12 +174,9 @@ fn dfs(start: State, blueprint: &Blueprint, t_remain: i32, memo: &mut HashMap<(S
         max_geode = max_geode.max(dfs(next_state, blueprint, t_remain - 1, memo));
         return max_geode;
     }
-    for resource in [
-        Resource::Obsidian,
-        Resource::Clay,
-        Resource::Ore,
-    ] {
-        if start.can_build_bot(&resource, blueprint) && start.should_build_bot(&resource, blueprint) {
+    for resource in [Resource::Obsidian, Resource::Clay, Resource::Ore] {
+        if start.can_build_bot(&resource, blueprint) && start.should_build_bot(&resource, blueprint)
+        {
             let next_state = start.build_bot(&resource, blueprint);
             max_geode = max_geode.max(dfs(next_state, blueprint, t_remain - 1, memo));
         }
@@ -174,10 +194,17 @@ fn main() {
     }
 
     let init_state = State {
-        ore: 0, clay: 0, obsidian: 0, geode: 0,
-        ore_bots: 1, clay_bots: 0, obsidian_bots: 0, geode_bots: 0
+        ore: 0,
+        clay: 0,
+        obsidian: 0,
+        geode: 0,
+        ore_bots: 1,
+        clay_bots: 0,
+        obsidian_bots: 0,
+        geode_bots: 0,
     };
-    let max_geode = blueprints.iter()
+    let max_geode = blueprints
+        .iter()
         .enumerate()
         .map(|(i, bp)| {
             let mut memo = HashMap::new();
@@ -188,15 +215,12 @@ fn main() {
         .sum::<i32>();
     println!("part 1: {max_geode}");
 
-
     let mut max_geodes = vec![];
-    blueprints.iter().take(3)
-        .enumerate()
-        .for_each(|(i, bp)| {
-            // println!("{i}, {bp:?}");
-            let mut memo = HashMap::new();
-            let max_geode = dfs(init_state.clone(), bp, 32, &mut memo);
-            max_geodes.push(max_geode);
-        });
+    blueprints.iter().take(3).enumerate().for_each(|(i, bp)| {
+        // println!("{i}, {bp:?}");
+        let mut memo = HashMap::new();
+        let max_geode = dfs(init_state.clone(), bp, 32, &mut memo);
+        max_geodes.push(max_geode);
+    });
     println!("{:?}", max_geodes[0] * max_geodes[1] * max_geodes[2]);
 }

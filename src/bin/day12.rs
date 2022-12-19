@@ -1,5 +1,5 @@
+use std::collections::{BinaryHeap, HashMap};
 use std::fs;
-use std::collections::{ BinaryHeap, HashMap };
 
 #[derive(Ord, Eq, PartialEq, PartialOrd, Hash, Clone)]
 struct Point(i32, i32);
@@ -16,7 +16,7 @@ fn parse_inputs(inputs: &str) -> (HashMap<Point, i32>, Point, Point) {
             match height {
                 97..=122 => {
                     grid.insert(point, (height - 97) as i32);
-                },
+                }
                 83 => {
                     grid.insert(point.clone(), 0);
                     start = point.clone();
@@ -24,7 +24,7 @@ fn parse_inputs(inputs: &str) -> (HashMap<Point, i32>, Point, Point) {
                 69 => {
                     grid.insert(point.clone(), 25);
                     end = point.clone();
-                },
+                }
                 _ => unreachable!("Illegal input"),
             };
         }
@@ -33,17 +33,17 @@ fn parse_inputs(inputs: &str) -> (HashMap<Point, i32>, Point, Point) {
     return (grid, start, end);
 }
 
-/// Return a list of coordinates that the input coordinate can travel to 
+/// Return a list of coordinates that the input coordinate can travel to
 fn get_neighbors(grid: &HashMap<Point, i32>, point: Point) -> Vec<Point> {
     let mut neighbors = vec![];
     let Point(r, c) = point;
     let height = grid.get(&point).unwrap();
 
     for neighbor in [
-        Point(r-1, c),
-        Point(r+1, c),
-        Point(r, c-1),
-        Point(r, c+1),
+        Point(r - 1, c),
+        Point(r + 1, c),
+        Point(r, c - 1),
+        Point(r, c + 1),
     ] {
         if let Some(neighbor_height) = grid.get(&neighbor) {
             if *neighbor_height <= *height + 1 {
@@ -57,7 +57,7 @@ fn get_neighbors(grid: &HashMap<Point, i32>, point: Point) -> Vec<Point> {
 
 fn dijkstra(grid: &HashMap<Point, i32>, start: Point) -> HashMap<Point, i32> {
     let mut dists: HashMap<Point, i32> = HashMap::from([(start.clone(), 0)]);
-    let mut pq: BinaryHeap<(i32, Point)> = BinaryHeap::from([(0, start.clone())]);  // this is max heap
+    let mut pq: BinaryHeap<(i32, Point)> = BinaryHeap::from([(0, start.clone())]); // this is max heap
     let mut visited: HashMap<Point, bool> = HashMap::from([(start, true)]);
 
     while let Some((dist, cur)) = pq.pop() {
@@ -67,7 +67,7 @@ fn dijkstra(grid: &HashMap<Point, i32>, start: Point) -> HashMap<Point, i32> {
 
         for neighbor in get_neighbors(&grid, cur) {
             if !visited.contains_key(&neighbor) {
-                pq.push((dist-1, neighbor.clone()));
+                pq.push((dist - 1, neighbor.clone()));
                 visited.insert(neighbor, true);
             }
         }
@@ -91,7 +91,9 @@ fn main() {
             let dists = dijkstra(&grid, point.clone());
             let local_min = dists.get(&stop);
             match local_min {
-                Some(m) if *m < min => { min = *m; },
+                Some(m) if *m < min => {
+                    min = *m;
+                }
                 _ => (),
             }
         }
