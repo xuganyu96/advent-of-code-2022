@@ -155,14 +155,17 @@ fn dfs(
     blueprint: &Blueprint,
     t_remain: i32,
     memo: &mut HashMap<(State, i32), i32>,
+    gmax: &mut i32,
 ) -> i32 {
-    // if start.geode_bots > 0 {
-    //     println!("{start:?}");
-    // }
     if let Some(max_geode) = memo.get(&(start.clone(), t_remain)) {
         return *max_geode;
     }
     if t_remain <= 0 {
+        *gmax = (*gmax).max(start.geode);
+        return start.geode;
+    }
+    let max_potential = start.geode + (start.geode_bots + start.geode_bots + t_remain - 1) * t_remain / 2; 
+    if max_potential < *gmax {
         return start.geode;
     }
     // you can: do nothing, build an ore bot, build a clay bot, build an
@@ -171,17 +174,18 @@ fn dfs(
 
     if start.can_build_bot(&Resource::Geode, blueprint) {
         let next_state = start.build_bot(&Resource::Geode, blueprint);
-        max_geode = max_geode.max(dfs(next_state, blueprint, t_remain - 1, memo));
+        max_geode = max_geode.max(dfs(next_state, blueprint, t_remain - 1, memo, gmax));
         return max_geode;
     }
-    for resource in [Resource::Obsidian, Resource::Clay, Resource::Ore] {
-        if start.can_build_bot(&resource, blueprint) && start.should_build_bot(&resource, blueprint)
+    for resource in [Resource::Obsidian, Resource::Ore, Resource::Clay] {
+        if start.can_build_bot(&resource, blueprint) 
+            && start.should_build_bot(&resource, blueprint)
         {
             let next_state = start.build_bot(&resource, blueprint);
-            max_geode = max_geode.max(dfs(next_state, blueprint, t_remain - 1, memo));
+            max_geode = max_geode.max(dfs(next_state, blueprint, t_remain - 1, memo, gmax));
         }
     }
-    max_geode = max_geode.max(dfs(start.idle(), blueprint, t_remain - 1, memo));
+    max_geode = max_geode.max(dfs(start.idle(), blueprint, t_remain - 1, memo, gmax));
     memo.insert((start, t_remain), max_geode);
     return max_geode;
 }
@@ -203,24 +207,26 @@ fn main() {
         obsidian_bots: 0,
         geode_bots: 0,
     };
-    let max_geode = blueprints
+    let quality_score = blueprints
         .iter()
         .enumerate()
         .map(|(i, bp)| {
             let mut memo = HashMap::new();
-            // println!("{i}");
-            let max_geode = dfs(init_state.clone(), bp, 24, &mut memo);
+            let mut gmax = 0;
+            let max_geode = dfs(init_state.clone(), bp, 24, &mut memo, &mut gmax);
             return (i as i32 + 1) * max_geode;
         })
         .sum::<i32>();
-    println!("part 1: {max_geode}");
+    println!("{quality_score}");
 
     let mut max_geodes = vec![];
     blueprints.iter().take(3).enumerate().for_each(|(i, bp)| {
-        // println!("{i}, {bp:?}");
         let mut memo = HashMap::new();
-        let max_geode = dfs(init_state.clone(), bp, 32, &mut memo);
+        let mut gmax = 0;
+        let max_geode = dfs(init_state.clone(), bp, 32, &mut memo, &mut gmax);
         max_geodes.push(max_geode);
     });
-    println!("{:?}", max_geodes[0] * max_geodes[1] * max_geodes[2]);
+    let mut product = 1;
+    max_geodes.iter().for_each(|max_geode| product *= max_geode);
+    println!("{product}");
 }
