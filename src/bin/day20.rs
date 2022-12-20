@@ -9,6 +9,9 @@ fn parse_input(inputs: &str) -> Vec<(usize, i64)> {
 /// move the number at "from" forward by "delta" units. "from" is an index;
 /// "delta" can be negative, 
 fn move_elem<T: Copy>(arr: &mut Vec<T>, from: usize, delta: i64) {
+    // the trick here is to modulo by (len - 1) instead of (len)
+    // because the list is circular; moving by (len - 1) will return
+    // to the original configuration
     let dst = (from as i64 + delta).rem_euclid(arr.len() as i64 - 1);
     let removed = arr.remove(from);
     arr.insert(dst as usize, removed);
