@@ -84,5 +84,6 @@ path = "src/bin/day18.rs"
 name = "day19"
 path = "src/bin/day19.rs"
 
-[dependencies]
-regex = "1.7.0"
+[[bin]]
+name = "day20"
+path = "src/bin/day20.rs"
