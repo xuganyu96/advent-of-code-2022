@@ -1,4 +1,8 @@
 # Notes and journals
+## Day 22 (Dec 21, 2022)
+Some helpful visualization:
+
+![day22-vis](./day22-img.jpeg)
 
 ## Day 15 (Dec 14, 2022)
 I don't know why but I implemented the same idea as some of the solutions posted on [Reddit]() but my solution is very slow... Today's problem took one Reddit user's solution 15ms to solve, but my solution, using largely the same idea, took 70 seconds!
