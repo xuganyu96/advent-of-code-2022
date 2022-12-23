@@ -189,7 +189,7 @@ fn main() {
     for round in 0.. {
         let (next_group, nmoves) = group.step(round);
         if nmoves == 0 {
-            println!("{round}");
+            println!("{}", round + 1);
             break;
         } else {
             group = next_group;
